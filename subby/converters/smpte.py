@@ -65,12 +65,12 @@ class _SMPTEConverter:
 
             try:
                 for time in ('begin', 'end'):
-                    if line[time].endswith('t'):
-                        line[time] = self._convert_ticks(line[time])
-                    elif line[time].endswith('ms'):
-                        line[time] = timestamp_from_ms(line[time][:-2])
+                    if line.get(time, "").endswith('t'):
+                        line[time] = self._convert_ticks(line.get(time, ""))
+                    elif line.get(time, "").endswith('ms'):
+                        line[time] = timestamp_from_ms(line.get(time, "")[:-2])
                     else:
-                        line[time] = self._parse_timestamp(line[time])
+                        line[time] = self._parse_timestamp(line.get(time, ""))
             except AttributeError:
                 self.logger.warning(
                     'Could not parse %s timestamp for line %02d, skipping',
@@ -80,8 +80,8 @@ class _SMPTEConverter:
 
             srt_line = Subtitle(
                 index=num,
-                start=timedelta_from_timestamp(line['begin']),
-                end=timedelta_from_timestamp(line['end']),
+                start=timedelta_from_timestamp(line.get('begin', "")),
+                end=timedelta_from_timestamp(line.get('end', "")),
                 content=''
             )
 
